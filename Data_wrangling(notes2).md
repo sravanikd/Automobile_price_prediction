@@ -125,4 +125,131 @@ df[["price"]] = df[["price"]].astype("float")
 df[["peak-rpm"]] = df[["peak-rpm"]].astype("float")
 
 
+# Data Standardization
+Data is usually collected from different agencies with different formats. (Data Standardization is also a term for a particular type of data normalization, where we subtract the mean and divide by the standard deviation)
 
+What is Standardization?
+
+Standardization is the process of transforming data into a common format which allows the researcher to make the meaningful comparison.
+
+Example
+
+Transform mpg to L/100km:
+
+In our dataset, the fuel consumption columns "city-mpg" and "highway-mpg" are represented by mpg (miles per gallon) unit. Assume we are developing an application in a country that accept the fuel consumption with L/100km standard
+
+We will need to apply data transformation to transform mpg into L/100km?
+
+The formula for unit conversion is
+
+L/100km = 235 / mpg
+
+ex:
+
+1.   Convert mpg to L/100km by mathematical operation (235 divided by mpg)
+df['city-L/100km'] = 235/df["city-mpg"]
+
+2.According to the example above, transform mpg to L/100km in the column of "highway-mpg", and change the name of column to "highway-L/100km".
+df.rename(columns={'highway-mpg':'highway-L/100km'},inplace=True)
+
+# Data Normalization
+Why normalization?
+
+Normalization is the process of transforming values of several variables into a similar range. Typical normalizations include scaling the variable so the variable average is 0, scaling the variable so the variance is 1, or scaling variable so the variable values range from 0 to 1
+
+Example
+
+To demonstrate normalization, let's say we want to scale the columns "length", "width" and "height"
+
+Target:would like to Normalize those variables so their value ranges from 0 to 1.
+
+Approach: replace original value by (original value)/(maximum value)
+
+replace (original value) by (original value)/(maximum value)
+df['length'] = df['length']/df['length'].max()
+df['width'] = df['width']/df['width'].max()
+
+# Binning
+Why binning?
+Binning is a process of transforming continuous numerical variables into discrete categorical 'bins', for grouped analysis.
+
+Example:
+
+In our dataset, "horsepower" is a real valued variable ranging from 48 to 288, it has 57 unique values. What if we only care about the price difference between cars with high horsepower, medium horsepower, and little horsepower (3 types)? Can we rearrange them into three ‘bins' to simplify analysis?
+
+We will use the Pandas method 'cut' to segment the 'horsepower' column into 3 bins
+
+Example of Binning Data In Pandas:
+Convert data to correct format
+
+df["horsepower"]=df["horsepower"].astype(int, copy=True)
+
+Lets plot the histogram of horspower, to see what the distribution of horsepower looks like.
+
+%matplotlib inline
+import matplotlib as plt
+from matplotlib import pyplot
+plt.pyplot.hist(df["horsepower"])
+​
+#set x/y labels and plot title
+plt.pyplot.xlabel("horsepower")
+plt.pyplot.ylabel("count")
+plt.pyplot.title("horsepower bins")
+
+We would like 3 bins of equal size bandwidth so we use numpy's linspace(start_value, end_value, numbers_generated function.
+
+Since we want to include the minimum value of horsepower we want to set start_value=min(df["horsepower"]).
+
+Since we want to include the maximum value of horsepower we want to set end_value=max(df["horsepower"]).
+
+Since we are building 3 bins of equal length, there should be 4 dividers, so numbers_generated=4.
+
+We build a bin array, with a minimum value to a maximum value, with bandwidth calculated above. The bins will be values used to determine when one bin ends and another begins.
+
+bins = np.linspace(min(df["horsepower"]), max(df["horsepower"]), 4)
+
+group_names = ['Low', 'Medium', 'High']
+
+We apply the function "cut" the determine what each value of "df['horsepower']" belongs to. 
+df['horsepower-binned'] = pd.cut(df['horsepower'], bins, labels=group_names, include_lowest=True )
+
+# Indicator variable (or dummy variable)
+What is an indicator variable?
+An indicator variable (or dummy variable) is a numerical variable used to label categories. They are called 'dummies' because the numbers themselves don't have inherent meaning.
+
+Why we use indicator variables?
+
+So we can use categorical variables for regression analysis in the later modules.
+
+Example
+We see the column "fuel-type" has two unique values, "gas" or "diesel". Regression doesn't understand words, only numbers. To use this attribute in regression analysis, we convert "fuel-type" into indicator variables.
+
+We will use the panda's method 'get_dummies' to assign numerical values to different categories of fuel type.
+
+dummy_variable_1 = pd.get_dummies(df["fuel-type"])
+dummy_variable_1.head()
+
+change column names for clarity 
+dummy_variable_1.rename(columns={'fuel-type-diesel':'gas', 'fuel-type-diesel':'diesel'}, inplace=True)
+
+We now have the value 0 to represent "gas" and 1 to represent "diesel" in the column "fuel-type". We will now insert this column back into our original dataset.
+
+#merge data frame "df" and "dummy_variable_1" 
+df = pd.concat([df, dummy_variable_1], axis=1)
+
+#drop original column "fuel-type" from "df"
+df.drop("fuel-type", axis = 1, inplace=True)
+
+examples:
+1. create indicator variable to the column of "aspiration": "std" to 0, while "turbo" to 1.
+#Write your code below and press Shift+Enter to execute 
+dummy_variable_2 = pd.get_dummies(df["aspiration"])
+dummy_variable_2.rename(columns={'std':'aspiration-std', 'turbo': 'aspiration-turbo'}, inplace=True)
+
+2. Merge the new dataframe to the original dataframe then drop the column 'aspiration'
+df = pd.concat([df, dummy_variable_2], axis=1)
+df.drop("aspiration", axis = 1, inplace=True)
+
+3. save the new csv
+
+df.to_csv('clean_df.csv')
