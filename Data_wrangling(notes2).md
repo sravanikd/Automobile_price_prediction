@@ -185,13 +185,18 @@ plt.pyplot.xlabel("horsepower")
 plt.pyplot.ylabel("count")
 plt.pyplot.title("horsepower bins") '''
 
-We would like 3 bins of equal size bandwidth so we use numpy's  `linspace(start_value, end_value, numbers_generated)` function.
+We would like 3 bins of equal size bandwidth so we use numpy's  
+`linspace(start_value, end_value, numbers_generated)` 
+function.
 
-Since we want to include the minimum value of horsepower we want to set `start_value=min(df["horsepower"])`.
+Since we want to include the minimum value of horsepower we want to set
+`start_value=min(df["horsepower"])`
 
-Since we want to include the maximum value of horsepower we want to set `end_value=max(df["horsepower"])`.
+Since we want to include the maximum value of horsepower we want to set
+`end_value=max(df["horsepower"])`
 
-Since we are building 3 bins of equal length, there should be 4 dividers, so `numbers_generated=4`.
+Since we are building 3 bins of equal length, there should be 4 dividers, so 
+`numbers_generated=4`
 
 We build a bin array, with a minimum value to a maximum value, with bandwidth calculated above. The bins will be values used to determine when one bin ends and another begins.
 
@@ -200,7 +205,8 @@ We build a bin array, with a minimum value to a maximum value, with bandwidth ca
 `group_names = ['Low', 'Medium', 'High']`
 
 We apply the function "cut" the determine what each value of "df['horsepower']" belongs to. 
-`df['horsepower-binned'] = pd.cut(df['horsepower'], bins, labels=group_names, include_lowest=True )`
+`df['horsepower-binned'] = pd.cut(df['horsepower']`
+`bins, labels=group_names, include_lowest=True )`
 
 ## Indicator variable (or dummy variable)
 An indicator variable (or dummy variable) is a numerical variable used to label categories. They are called 'dummies' because the numbers themselves don't have inherent meaning.
@@ -216,7 +222,8 @@ We will use the panda's method  `'get_dummies'` to assign numerical values to di
 `dummy_variable_1 = pd.get_dummies(df["fuel-type"])`
 
 #### change column names for clarity 
-`dummy_variable_1.rename(columns={'fuel-type-diesel':'gas', 'fuel-type-diesel':'diesel'}, inplace=True)`
+`dummy_variable_1.rename(columns={'fuel-type-diesel':'gas'`
+`'fuel-type-diesel':'diesel'}, inplace=True)`
 We now have the value 0 to represent "gas" and 1 to represent "diesel" in the column "fuel-type". We will now insert this column back into our original dataset.
 
 #merge data frame "df" and "dummy_variable_1" 
@@ -236,5 +243,4 @@ We now have the value 0 to represent "gas" and 1 to represent "diesel" in the co
 `df.drop("aspiration", axis = 1, inplace=True)`
 
 3. save the new csv
-
 `df.to_csv('clean_df.csv')`
